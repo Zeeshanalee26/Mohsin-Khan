@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const cardWidth = cards[0].offsetWidth + 24;
   let maxScroll = (cards.length * cardWidth) - processGrid.offsetWidth;
 
-  // Add these style properties to prevent selection
   processSection.style.userSelect = 'none';
   processSection.style.webkitUserSelect = 'none';
   processSection.style.msUserSelect = 'none';
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateCursor(e) {
       const sectionRect = processSection.getBoundingClientRect();
       
-      // Check if mouse is within the process section
       const isOverSection = (
           e.clientX >= sectionRect.left &&
           e.clientX <= sectionRect.right &&
@@ -33,19 +31,15 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
       }
 
-      // Always show custom cursor in process section
       document.body.style.cursor = 'none';
       
-      // Determine which half we're on
       const isLeftHalf = e.clientX < (sectionRect.left + sectionRect.width / 2);
 
-      // Update cursor positions
       cursorLeft.style.left = `${e.clientX}px`;
       cursorLeft.style.top = `${e.clientY}px`;
       cursorRight.style.left = `${e.clientX}px`;
       cursorRight.style.top = `${e.clientY}px`;
 
-      // Show appropriate cursor
       if (isLeftHalf) {
           cursorLeft.style.opacity = '1';
           cursorRight.style.opacity = '0';
@@ -85,13 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
       animation = requestAnimationFrame(animate);
   }
 
-  // Initialize cursors
   cursorLeft.style.display = 'block';
   cursorRight.style.display = 'block';
   cursorLeft.style.opacity = '0';
   cursorRight.style.opacity = '0';
 
-  // Event Listeners
   processSection.addEventListener('mousemove', updateCursor);
   
   processSection.addEventListener('click', (e) => {
@@ -106,14 +98,13 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   processSection.addEventListener('mouseleave', () => {
-      cursorLeft.style.transition = 'none';  // Disable transitions temporarily
+      cursorLeft.style.transition = 'none';  
       cursorRight.style.transition = 'none';
       
       document.body.style.cursor = 'default';
       cursorLeft.style.opacity = '0';
       cursorRight.style.opacity = '0';
       
-      // Re-enable transitions after a small delay
       setTimeout(() => {
           cursorLeft.style.transition = '';
           cursorRight.style.transition = '';

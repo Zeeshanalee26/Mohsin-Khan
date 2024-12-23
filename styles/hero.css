@@ -1,7 +1,7 @@
 .service-areas {
   max-width: 1140px;
   margin: 0 auto;
-  padding: 60px 20px;
+  padding: 60px max(20px, 5vw);
 }
 
 .service-header {
@@ -24,7 +24,7 @@
 
 .service-content {
   display: flex;
-  gap: 80px;
+  gap: clamp(40px, 5vw, 80px);
   align-items: flex-start;
 }
 
@@ -76,6 +76,7 @@
   overflow: hidden;
   border-radius: 4px;
   margin-top: 20px;
+  transition: transform 0.5s ease;
 }
 
 .service-image img {
@@ -83,7 +84,7 @@
   height: 100%;
   object-fit: cover;
   position: absolute;
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s ease, opacity 0.5s ease;
   will-change: transform, opacity;
 }
 
@@ -160,4 +161,103 @@
   background: #333;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+@media (min-width: 1440px) {
+  .service-header h1 {
+    font-size: clamp(42px, 3vw, 52px);
+  }
+
+  .service-item h3 {
+    font-size: clamp(24px, 1.8vw, 28px);
+  }
+}
+
+@media (max-width: 1200px) {
+  .service-content {
+    gap: 40px;
+  }
+
+  .service-text {
+    flex: 0 0 50%;
+  }
+
+  .service-image {
+    flex: 0 0 45%;
+    height: clamp(350px, 40vh, 400px);
+  }
+}
+
+@media (max-width: 1040px) {
+  .service-areas {
+    padding: 40px 20px;
+  }
+
+  .service-header {
+    margin-bottom: 40px;
+  }
+
+  .service-header h1 {
+    font-size: 36px;
+  }
+
+  .service-content {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .service-text {
+    flex: none;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .service-image {
+    flex: none;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    height: 350px;
+  }
+
+  .service-item {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 2000px) {
+  .service-areas {
+    max-width: 1800px;
+  }
+  
+  .service-text {
+    flex: 0 0 40%;
+  }
+
+  .service-image {
+    flex: 0 0 50%;
+    height: 500px;
+  }
+}
+
+.service-item.service-1 .timer-fill {
+  background: red;
+}
+
+.service-item.service-2 .timer-fill {
+  background: blue; 
+}
+
+.service-item.service-3 .timer-fill {
+  background: green; 
+}
+
+.service-item:hover .service-image {
+  transform: translateY(-10px);
+}
+
+.service-item:hover .service-image img {
+  transform: scale(1.1);
+  opacity: 0.9;
 }

@@ -30,6 +30,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 64px 32px;
+  max-width: 1013px;
 }
 
 .project-card {
@@ -111,6 +112,10 @@
   .projects-grid {
     grid-template-columns: 1fr;
     gap: 40px;
+  }
+
+  .project-card {
+    max-width: 100%;
   }
 
   .projects h1 {

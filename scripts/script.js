@@ -1,103 +1,99 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const serviceItems = document.querySelectorAll('.service-item');
-    const serviceImageContainer = document.querySelector('.service-image');
-    const SLIDE_DURATION = 5000; // 5 seconds per slide
-    let currentIndex = 0;
-    let slideInterval;
-    let isHovered = false;
+  const serviceItems = document.querySelectorAll('.service-item');
+  const serviceImageContainer = document.querySelector('.service-image');
+  const SLIDE_DURATION = 5000;
+  let currentIndex = 0;
+  let slideInterval;
+  let isHovered = false;
 
-    function createImage(src) {
-        const img = document.createElement('img');
-        img.src = src;
-        return img;
-    }
+  function initialize() {
+      const firstImage = createImage(serviceItems[0].getAttribute('data-image'));
+      firstImage.classList.add('active');
+      serviceImageContainer.appendChild(firstImage);
+      serviceItems[0].classList.add('active');
+      startTimer(0);
+  }
 
-    function initializeSlideshow() {
-        // Create and set first image
-        const firstImage = createImage(serviceItems[0].getAttribute('data-image'));
-        firstImage.classList.add('current');
-        serviceImageContainer.appendChild(firstImage);
-        serviceItems[0].classList.add('active');
-        startTimer(0);
-    }
+  function createImage(src) {
+      const img = document.createElement('img');
+      img.src = src;
+      return img;
+  }
 
-    function startTimer(index) {
-        const timerFill = serviceItems[index].querySelector('.timer-fill');
-        timerFill.style.transition = `width ${SLIDE_DURATION}ms linear`;
-        timerFill.style.width = '100%';
-    }
+  function startTimer(index) {
+      const timerFill = serviceItems[index].querySelector('.timer-fill');
+      timerFill.style.transition = `width ${SLIDE_DURATION}ms linear`;
+      timerFill.style.width = '100%';
+  }
 
-    function resetTimer(index) {
-        const timerFill = serviceItems[index].querySelector('.timer-fill');
-        timerFill.style.transition = 'none';
-        timerFill.style.width = '0';
-        void timerFill.offsetWidth; // Force reflow
-    }
+  function resetTimer(index) {
+      const timerFill = serviceItems[index].querySelector('.timer-fill');
+      timerFill.style.transition = 'none';
+      timerFill.style.width = '0';
+      void timerFill.offsetWidth; // Force reflow
+  }
 
-    function switchSlide(newIndex, immediate = false) {
-        // Reset current timer and active state
-        resetTimer(currentIndex);
-        serviceItems[currentIndex].classList.remove('active');
+  function switchSlide(newIndex, immediate = false) {
+      resetTimer(currentIndex);
+      serviceItems[currentIndex].classList.remove('active');
 
-        // Setup new image
-        const currentImage = serviceImageContainer.querySelector('img.current');
-        const newImage = createImage(serviceItems[newIndex].getAttribute('data-image'));
-        
-        currentImage.classList.add('sliding-out');
-        newImage.classList.add('next');
-        serviceImageContainer.appendChild(newImage);
+      const currentImage = serviceImageContainer.querySelector('img.active');
+      const newImage = createImage(serviceItems[newIndex].getAttribute('data-image'));
+      serviceImageContainer.appendChild(newImage);
 
-        // Trigger animation
-        setTimeout(() => {
-            newImage.classList.remove('next');
-            newImage.classList.add('current');
-            
-            // Cleanup after animation
-            setTimeout(() => {
-                if (currentImage && currentImage.parentNode) {
-                    serviceImageContainer.removeChild(currentImage);
-                }
-            }, 800);
-        }, 50);
+      if (!immediate) {
+          void newImage.offsetWidth; 
+          currentImage.style.opacity = '0';
+          currentImage.style.transform = 'translateY(-20px)'; 
+      }
+      newImage.classList.add('active');
 
-        // Update active states
-        serviceItems[newIndex].classList.add('active');
-        startTimer(newIndex);
+      serviceItems[newIndex].classList.add('active');
+      startTimer(newIndex);
 
-        currentIndex = newIndex;
-    }
+      setTimeout(() => {
+          if (currentImage) serviceImageContainer.removeChild(currentImage);
+      }, 500);
 
-    function nextSlide() {
-        const nextIndex = (currentIndex + 1) % serviceItems.length;
-        switchSlide(nextIndex);
-    }
+      currentIndex = newIndex;
+  }
 
-    function startAutoplay() {
-        if (slideInterval) clearInterval(slideInterval);
-        slideInterval = setInterval(() => {
-            if (!isHovered) nextSlide();
-        }, SLIDE_DURATION);
-    }
+  function nextSlide() {
+      const nextIndex = (currentIndex + 1) % serviceItems.length;
+      switchSlide(nextIndex);
+  }
 
-    // Event Listeners
-    serviceItems.forEach((item, index) => {
-        item.addEventListener('mouseenter', () => {
-            isHovered = true;
-            clearInterval(slideInterval);
-            if (currentIndex !== index) {
-                switchSlide(index, true);
-            }
-        });
+  function startAutoplay() {
+      if (slideInterval) clearInterval(slideInterval);
+      slideInterval = setInterval(() => {
+          if (!isHovered) nextSlide();
+      }, SLIDE_DURATION);
+  }
 
-        item.addEventListener('mouseleave', () => {
-            isHovered = false;
-            resetTimer(currentIndex);
-            startTimer(currentIndex);
-            startAutoplay();
-        });
-    });
+  // Event Listeners
+  serviceItems.forEach((item, index) => {
+      item.addEventListener('mouseenter', () => {
+          isHovered = true;
+          clearInterval(slideInterval);
+          if (currentIndex !== index) {
+              const currentImage = serviceImageContainer.querySelector('img.active');
+              if (currentImage) {
+                  currentImage.style.transition = 'transform 0.5s ease, opacity 0.5s ease'; 
+                  currentImage.style.transform = 'translateY(-20px)'; 
+                  currentImage.style.opacity = '0'; 
+              }
+              switchSlide(index, true);
+          }
+      });
 
-    // Initialize and start
-    initializeSlideshow();
-    startAutoplay();
+      item.addEventListener('mouseleave', () => {
+          isHovered = false;
+          resetTimer(currentIndex);
+          startTimer(currentIndex);
+          startAutoplay();
+      });
+  });
+
+  initialize();
+  startAutoplay();
 });
