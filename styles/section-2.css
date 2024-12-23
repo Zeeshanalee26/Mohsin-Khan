@@ -1,0 +1,59 @@
+.section-2 {
+  width: 100%;
+  padding: 100px 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+
+.logo-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+.company-logo {
+  color: #D1D5DB;
+  transition: all 0.3s ease;
+  opacity: 1;
+}
+
+.company-logo:hover {
+  color: #9CA3AF;
+  transform: translateY(-2px);
+}
+
+.fa-facebook-f {
+  font-size: 35px;
+}
+
+.fa-google {
+  font-size: 40px;
+}
+
+.fa-apple {
+  font-size: 45px;
+}
+
+.fa-amazon {
+  font-size: 42px;
+}
+
+.fa-microsoft {
+  font-size: 38px;
+}
+
+@media (max-width: 768px) {
+  .logo-container {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      padding: 0 20px;
+  }
+  
+  .company-logo {
+      font-size: 30px;
+  }
+}
