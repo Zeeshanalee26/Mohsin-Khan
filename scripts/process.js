@@ -10,29 +10,34 @@ document.addEventListener('DOMContentLoaded', function() {
   const cardWidth = cards[0].offsetWidth + 24;
   let maxScroll = (cards.length * cardWidth) - processGrid.offsetWidth;
 
+  // Add these style properties to prevent selection
+  processSection.style.userSelect = 'none';
+  processSection.style.webkitUserSelect = 'none';
+  processSection.style.msUserSelect = 'none';
+
   function updateCursor(e) {
-      const rect = processGrid.getBoundingClientRect();
+      const sectionRect = processSection.getBoundingClientRect();
       
-      // Check if mouse is within the process grid
-      const isOverProcessArea = (
-          e.clientX >= rect.left &&
-          e.clientX <= rect.right &&
-          e.clientY >= rect.top &&
-          e.clientY <= rect.bottom
+      // Check if mouse is within the process section
+      const isOverSection = (
+          e.clientX >= sectionRect.left &&
+          e.clientX <= sectionRect.right &&
+          e.clientY >= sectionRect.top &&
+          e.clientY <= sectionRect.bottom
       );
 
-      if (!isOverProcessArea) {
+      if (!isOverSection) {
           cursorLeft.style.opacity = '0';
           cursorRight.style.opacity = '0';
           document.body.style.cursor = 'default';
           return;
       }
 
-      // Always show custom cursor in process area
+      // Always show custom cursor in process section
       document.body.style.cursor = 'none';
       
       // Determine which half we're on
-      const isLeftHalf = e.clientX < (rect.left + rect.width / 2);
+      const isLeftHalf = e.clientX < (sectionRect.left + sectionRect.width / 2);
 
       // Update cursor positions
       cursorLeft.style.left = `${e.clientX}px`;
@@ -57,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const start = scrollPosition;
       const change = target - start;
-      const duration = 300; // Faster animation
+      const duration = 300;
       let startTime = null;
 
       function animate(currentTime) {
@@ -65,8 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / duration, 1);
 
-          // Smoother easing function
-          const easeProgress = 1 - Math.pow(1 - progress, 4); // Quartic easing
+          const easeProgress = 1 - Math.pow(1 - progress, 4);
           
           scrollPosition = start + (change * easeProgress);
           processGrid.style.transform = `translate3d(-${scrollPosition}px, 0, 0)`;
@@ -88,24 +92,32 @@ document.addEventListener('DOMContentLoaded', function() {
   cursorRight.style.opacity = '0';
 
   // Event Listeners
-  processGrid.addEventListener('mousemove', updateCursor);
+  processSection.addEventListener('mousemove', updateCursor);
+  
+  processSection.addEventListener('click', (e) => {
+      const sectionRect = processSection.getBoundingClientRect();
+      const isLeftHalf = e.clientX < (sectionRect.left + sectionRect.width / 2);
 
-  processGrid.addEventListener('click', (e) => {
-      const rect = processGrid.getBoundingClientRect();
-      const isLeftHalf = e.clientX < (rect.left + rect.width / 2);
-
-      // Always allow clicking in either direction
-      if (isLeftHalf) {
+      if (isLeftHalf && scrollPosition > 0) {
           smoothScroll(Math.max(scrollPosition - cardWidth, 0));
-      } else {
+      } else if (!isLeftHalf && scrollPosition < maxScroll) {
           smoothScroll(Math.min(scrollPosition + cardWidth, maxScroll));
       }
   });
 
-  processGrid.addEventListener('mouseleave', () => {
+  processSection.addEventListener('mouseleave', () => {
+      cursorLeft.style.transition = 'none';  // Disable transitions temporarily
+      cursorRight.style.transition = 'none';
+      
       document.body.style.cursor = 'default';
       cursorLeft.style.opacity = '0';
       cursorRight.style.opacity = '0';
+      
+      // Re-enable transitions after a small delay
+      setTimeout(() => {
+          cursorLeft.style.transition = '';
+          cursorRight.style.transition = '';
+      }, 50);
   });
 
   window.addEventListener('resize', () => {
